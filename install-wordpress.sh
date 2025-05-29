@@ -2,7 +2,7 @@
 
 set -e
 
-cd /var/www
+cd /var/www/html
 
 # Download latest WordPress if not already present
 if [ ! -f wp-config.php ]; then
@@ -50,6 +50,6 @@ fi
 # Set proper permissions
 # chown -R www-data:www-data /var/www
 # Allow group write access and set group to your user
-chown -R www-data:1000 /var/www
-chmod -R g+rw /var/www
-find /var/www -type d -exec chmod g+s {} \;
+chown -R www-data:1000 /var/www/html
+chmod -R g+rw /var/www/html
+find /var/www/html -type d -exec chmod g+s {} \;

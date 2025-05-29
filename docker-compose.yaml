@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: docker/nginx.docker
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
     ports:
       - "8888:80"
     links:
@@ -18,9 +18,9 @@ services:
       dockerfile: docker/php/Dockerfile
     restart: unless-stopped
     tty: true
-    working_dir: /var/www
+    working_dir: /var/www/html
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     command: ["bash", "-c", "./install-wordpress.sh && php-fpm"]
     depends_on:
