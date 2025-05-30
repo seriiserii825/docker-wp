@@ -31,6 +31,9 @@ services:
        chmod -R 755 wp-content/ai1wm-backups wp-content/plugins/all-in-one-wp-migration/storage && \
        php-fpm"
     ]
+    environment:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
     depends_on:
       - mysql
 
