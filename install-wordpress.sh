@@ -62,3 +62,5 @@ function setPermissions(){
 
 downloadWordpress
 setPermissions
+
+notify-send "WordPress Installation" "WordPress has been successfully installed in $current_dir."
