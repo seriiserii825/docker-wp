@@ -10,7 +10,7 @@ after clone cd into the folder and run the script docker-compose up
 will be call script setup-wp.sh
 
 will download  wordpess latest version 
-to install call script
+to install wordpress call script
 ./scripts/install-wp.sh
 
 
