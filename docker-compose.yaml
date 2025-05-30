@@ -49,8 +49,6 @@ services:
 
   wpcli:
     image: wordpress:cli
-    # user: "33:33" # optional: match with www-data UID/GID
-    # user: "${UID}:${GID}"
     user: "${HOST_UID}:${HOST_GID}"
     volumes:
       - ./:/var/www/html
