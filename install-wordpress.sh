@@ -20,35 +20,35 @@ function downloadWordpress(){
     echo "Generating wp-config.php..."
 
     cat > wp-config.php <<EOF
-  <?php
-  define( 'DB_NAME', 'wordpress' );
-  define( 'DB_USER', 'wp_user' );
-  define( 'DB_PASSWORD', 'wp_pass' );
-  define( 'DB_HOST', 'mysql' );
-  define( 'DB_CHARSET', 'utf8mb4' );
-  define( 'DB_COLLATE', '' );
+<?php
+define( 'DB_NAME', 'wordpress' );
+define( 'DB_USER', 'wp_user' );
+define( 'DB_PASSWORD', 'wp_pass' );
+define( 'DB_HOST', 'mysql' );
+define( 'DB_CHARSET', 'utf8mb4' );
+define( 'DB_COLLATE', '' );
 
-  // Authentication Unique Keys and Salts
+// Authentication Unique Keys and Salts
 EOF
 
 curl -s https://api.wordpress.org/secret-key/1.1/salt/ >> wp-config.php
 
 cat >> wp-config.php <<'EOF'
 
-  $table_prefix = 'wp_';
+$table_prefix = 'wp_';
 
-  define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', false );
 
-  if ( ! defined( 'ABSPATH' ) ) {
-      define( 'ABSPATH', __DIR__ . '/' );
-    }
+if ( ! defined( 'ABSPATH' ) ) {
+    define( 'ABSPATH', __DIR__ . '/' );
+}
 
-  require_once ABSPATH . 'wp-settings.php';
+require_once ABSPATH . 'wp-settings.php';
 EOF
 echo "wp-config.php created."
 else
   echo "WordPress already exists."
-  fi
+fi
 }
 
 function setPermissions(){
@@ -63,4 +63,4 @@ function setPermissions(){
 downloadWordpress
 setPermissions
 
-notify-send "WordPress Installation" "WordPress has been successfully installed in $current_dir."
+echo "${tgreen}WordPress installation completed.${treset}"
