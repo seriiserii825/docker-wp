@@ -1,4 +1,5 @@
 ## install docker from github with script
+in repo will find scripts/wp-docker.sh download it, set +x and run ./wp-docker.sh
 
 will prompt folder name to clone repo
 
