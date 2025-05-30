@@ -22,7 +22,15 @@ services:
     volumes:
       - ./:/var/www/html
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    command: ["bash", "-c", "./install-wordpress.sh && php-fpm"]
+    # command: ["bash", "-c", "./install-wordpress.sh && php-fpm"]
+    command: [
+      "bash", "-c",
+      "./install-wordpress.sh && \
+       mkdir -p wp-content/ai1wm-backups wp-content/plugins/all-in-one-wp-migration/storage && \
+       chown -R www-data:www-data wp-content/ai1wm-backups wp-content/plugins/all-in-one-wp-migration/storage && \
+       chmod -R 755 wp-content/ai1wm-backups wp-content/plugins/all-in-one-wp-migration/storage && \
+       php-fpm"
+    ]
     depends_on:
       - mysql
 
