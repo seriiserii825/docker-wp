@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -x
 
 current_dir=$(pwd)
 dir_name=$(basename "$current_dir")
