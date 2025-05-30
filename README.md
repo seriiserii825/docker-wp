@@ -13,4 +13,5 @@ will download  wordpess latest version
 to install wordpress call script
 ./scripts/install-wp.sh
 
-
+after installing, in nginx config and /etc/hosts will be written theme.local
+need to docker down adn docker build
