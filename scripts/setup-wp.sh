@@ -64,3 +64,5 @@ downloadWordpress
 setPermissions
 
 echo "${tgreen}WordPress installation completed.${treset}"
+
+
