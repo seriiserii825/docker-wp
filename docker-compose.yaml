@@ -23,7 +23,7 @@ services:
       - ./:/var/www/html
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     command: >
-      bash -c "./scripts/setup-wp.sh && ./scripts/aiwm.sh && php-fpm"
+      bash -c "./scripts/setup-wp.sh && php-fpm"
     environment:
         HOST_UID: ${HOST_UID}
         HOST_GID: ${HOST_GID}
