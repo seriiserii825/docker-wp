@@ -1,28 +1,26 @@
-## install docker from github with script
-in repo will find scripts/wp-docker.sh download it, set +x and run ./wp-docker.sh
+## Запустите скрипт init-wp-docker.sh
+Вначале спросит название папки для клонирования репозитория, из названия которой построится доменное имя, пример: test -> test.local
 
-will prompt folder name to clone repo
+Пойдет установка, установятся контейнеры, вордпресс, создастя аккаунт по-умолчанию:
 
 ```
-wp-docker.sh
+логин: admin
+пароль: admin
+email: admin@gmail.com
 ```
 
-after clone cd into the folder and run the script docker-compose up
-will be call script setup-wp.sh
+Можно поменять вначале установки
 
-will download  wordpess latest version 
-!!! need to wait untill wp will be downloaded(about 10sec)
+После установки откройте браузер и перейдите по адресу: http://test.local
 
-to install wordpress call script
-./scripts/install-wp.sh
+Войдите в админку по-умолчанию, используя логин и пароль выше
 
-after installing, in nginx config and /etc/hosts will be written theme.local
-need to docker down adn docker build
+### Установка плагинов и бэкапов(с помощью скрипта wp-python для избранных)
 
-### go to theme folder twentyseventeen 
 ```
-run:
+wb
+wb init
+wb plugins -> base plugins
+wb backups -> restore from downloads
 
-- wb init
-- wb plugins base
-- wb backup restore from downloads
+```
