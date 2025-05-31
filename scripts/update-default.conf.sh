@@ -48,4 +48,3 @@ else
   message="${tgreen}Added server_name to nginx config for ${theme_name}${treset}"
   prettyEcho "$message"
 fi
-prettyEcho "${tgreen}Updated nginx config for ${theme_name}${treset}"
