@@ -2,9 +2,90 @@
 
 set -e
 
+# check if docker is running
+if ! docker info > /dev/null 2>&1; then
+  echo "${tmagenta}Docker is not running. Please start Docker and try again.${treset}"
+  exit 1
+fi
+
+# check if docker-compose is installed
+if ! command -v docker-compose &> /dev/null; then
+  echo "${tmagenta}docker-compose is not installed. Please install it and try again.${treset}"
+  exit 1
+fi
+
+function prettyEcho(){
+  echo "------------------"
+  echo -e "$*"
+  echo "------------------"
+}
+
+intro_message=$(cat <<'EOF'
+==============================
+Run the init-wp-docker.sh script
+==============================
+
+===============================
+Enter name, email, password
+Enter the name of the folder for cloning the repository, from the name of which the domain name will be built, example: test -> test.local
+The installation will start, containers, wordpress will be installed, creating a default account:
+
+login: admin  
+password: admin  
+email: admin@gmail.com
+===============================
+
+================================
+You can change it at the beginning of the installation
+After installation, open the browser and go to: http://test.local
+Log in to the default admin panel using the login and password above
+================================
+
+===============================
+Installing plugins and backups (using the wp-python script for favorites)
+
+wb  
+wb init  
+wb plugins - base plugins  
+wb backups - restore from downloads
+================================
+EOF
+)
+
+prettyEcho "${intro_message}"
+
 # Export UID/GID for container use
 export HOST_UID=$(id -u)
 export HOST_GID=$(id -g)
+
+# email, user , password
+message="By default will be used name: admin, email: admin@gmail.com, password: admin"
+prettyEcho "${message}"
+read -p "${tmagenta}Do you want to use different admin user, email and password? (y/n): ${treset}" use_custom_admin
+
+if [ $use_custom_admin == "y" ];then 
+  read -p "${tblue}Enter name: ${treset}" admin_user
+  read -p "${tblue}Enter email: ${treset}" admin_email
+  read -p "${tblue}Enter password: ${treset}" admin_password
+  if [ -z "$admin_user" ] || [ -z "$admin_email" ] || [ -z "$admin_password" ]; then
+    message="Sowething went wrong, will be used default values."
+    prettyEcho "${message}"
+  fi
+else
+  admin_user="admin"
+  admin_password="admin"
+  admin_email="admin@gmail.com"
+fi
+
+message="user: ${admin_user}\n email: ${admin_email}\n password: ${admin_password}"
+prettyEcho "${message}"
+
+read -p "${tmagenta}Do you want to continue? (y/n): ${treset}" confirm
+if [ "$confirm" != "y" ]; then
+  message="Exiting script."
+  prettyEcho "${message}"
+  exit 1
+fi
 
 # ─────────────────────────────────────────────────────────────
 # Setup colors for output
@@ -13,23 +94,19 @@ tgreen=$(tput setaf 2)
 tmagenta=$(tput setaf 5)
 treset=$(tput sgr0)
 
-function prettyEcho(){
-  echo "------------------"
-  echo -e "$*"
-  echo "------------------"
-}
-
 # ─────────────────────────────────────────────────────────────
 # Ask for project folder
-echo "Need to enter folder name, that will be created after cloning the repository."
-echo "From folder name will be created project url like: http://folder_name.local"
-read -p "Enter folder name: " folder_name
+message="Need to enter folder name, that will be created after cloning the repository.\n From folder name will be created project url like: http://folder_name.local"
+prettyEcho "${message}"
+read -p "${tgreen}Enter folder name: ${treset}" folder_name
 if [ -z "$folder_name" ]; then
-  echo "Folder name cannot be empty."
+  message="Folder name cannot be empty."
+  prettyEcho "${message}"
   exit 1
 fi
 
 # ─────────────────────────────────────────────────────────────
+
 # Clone repo
 current_user=$(whoami)
 if [ "$current_user" == "serii" ]; then
@@ -81,7 +158,8 @@ prettyEcho "${tgreen}Starting Docker containers...${treset}"
 docker-compose up -d --build
 
 # Wait for MySQL to be up (important for wp-cli)
-echo "Waiting for MySQL to be ready..."
+message="Waiting for MySQL to be ready..."
+prettyEcho "${message}"
 until docker-compose exec -T mysql mysql -uwp_user -pwp_pass -e "SHOW DATABASES;" &> /dev/null; do
   sleep 4
 done
@@ -104,6 +182,8 @@ if [ -f wp-config.php ]; then
   rm wp-config.php
 fi
 
+# ─────────────────────────────────────────────────────────────
+
 # Create wp-config.php
 docker-compose run \
   -e HOME=/tmp \
@@ -113,7 +193,6 @@ docker-compose run \
   --dbpass=wp_pass \
   --dbhost=mysql
 
-# Install WordPress (this creates the DB tables)
 docker-compose run \
   -e HOME=/tmp \
   -e WP_CLI_DISABLE_CACHE=1 \
@@ -121,9 +200,9 @@ docker-compose run \
   --rm wpcli core install \
     --url="http://${theme_name}" \
     --title="My Site" \
-    --admin_user=admin \
-    --admin_password=admin \
-    --admin_email=admin@gmail.com \
+    --admin_user="${admin_user}" \
+    --admin_password="${admin_password}" \
+    --admin_email="${admin_email}" \
     --skip-email
 
 # Now it's safe to update the home and siteurl options
@@ -140,4 +219,6 @@ docker-compose up -d --build
 # ─────────────────────────────────────────────────────────────
 # Notify completion
 prettyEcho "${tgreen}🎉 Your local WordPress site is ready at http://${theme_name}${treset}"
+message="Your credentials:\nUser: ${admin_user}\nEmail: ${admin_email}\nPassword: ${admin_password}"
+prettyEcho "${message}"
 notify-send "WordPress Ready" "http://${theme_name}"
