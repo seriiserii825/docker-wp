@@ -32,11 +32,20 @@ initial_conf="docker/nginx/initial.conf"
 
 if [ ! -f "$conf_path" ] && [ -f "$initial_conf" ]; then
   cp "$initial_conf" "$conf_path"
+  message="${tgreen}Created default nginx config from initial.conf${treset}"
+  printyEcho "$message"
+else
+  message="${tblue}Using existing nginx config at $conf_path${treset}"
+  prettyEcho "$message"
 fi
 
 if grep -q "server_name" "$conf_path"; then
   sed -i "s/server_name .*/server_name ${theme_name};/" "$conf_path"
+  message="${tgreen}Updated server_name in nginx config to ${theme_name}${treset}"
+  prettyEcho "$message"
 else
   sed -i "/listen 80;/a \ \ \ \ server_name ${theme_name};" "$conf_path"
+  message="${tgreen}Added server_name to nginx config for ${theme_name}${treset}"
+  prettyEcho "$message"
 fi
 prettyEcho "${tgreen}Updated nginx config for ${theme_name}${treset}"
