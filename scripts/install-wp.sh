@@ -32,10 +32,13 @@ function themeToNginx(){
   fi
   cd nginx
   # check for nginx.docker file
-  if [ ! -f "default.conf" ]; then
-    echo "${tmagenta}No default.conf file found, exiting.${treset}"
+  if [ ! -f "initial.conf" ]; then
+    echo "${tmagenta}No initial.conf file found, exiting.${treset}"
     exit 1
   fi
+
+  cp initial.conf default.conf
+
   # check if file line with server_naem
   if grep -q "server_name" default.conf; then
     # replace with new one
