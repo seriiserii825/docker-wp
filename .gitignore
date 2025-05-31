@@ -1,3 +1,4 @@
+docker/nginx/default.conf
 wp-admin/
 wp-content/
 wp-includes/
